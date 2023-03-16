@@ -1,5 +1,6 @@
 package computacao.grafica
 
+import java.awt.Color
 import java.awt.Graphics
 import java.awt.Polygon
 import java.util.*
@@ -9,58 +10,54 @@ class DesenhaPoligonoConcavo(val eixoX: Int, val eixoY: Int) : JPanel() {
 
     val pontosEmX = listOf(100, 250, 300, 400, 300, 250, 180)
     val pontosEmY = listOf(130, 100, 210, 150, 350, 280, 350)
-    private var NumeroDeVertices: Int = 7
+    private var numeroDeVertices: Int = 7
 
     override fun paint(g: Graphics?) {
         super.paint(g)
-
-        for (i in 0 until NumeroDeVertices) {
-            val x2: Int = pontosEmX.get(i)
-            val y2: Int = pontosEmY.get(i)
-            val x3: Int =
-                pontosEmX.get((i + 1) % NumeroDeVertices) /* e necessario fazer a divisão para garantir que pecorremos todos os pontos*/
-            val y3: Int = pontosEmY.get((i + 1) % NumeroDeVertices)
-            g!!.drawLine(x2, y2, x3, y3)
+        repeat(numeroDeVertices) { indice ->
+            val x2: Int = pontosEmX[indice]
+            val y2: Int = pontosEmY[indice]
+            val x3: Int = pontosEmX[(indice + 1) % numeroDeVertices]
+            val y3: Int = pontosEmY[(indice + 1) % numeroDeVertices]
+            g?.let { graficos ->
+                graficos.color = Color.BLACK
+                graficos.drawLine(x2, y2, x3, y3)
+                preencherPoligonoComRasterizacao(graficos)
+            }
         }
-        //pintar(g)
     }
 
-    fun pintar(g: Graphics?) {
-        super.paint(g)
+    private fun preencherPoligonoComRasterizacao(graficos: Graphics) {
+        val poly = Polygon(pontosEmX.toIntArray(), pontosEmY.toIntArray(), numeroDeVertices)
+        val scan = IntArray(size.width)
+        val minY = poly.bounds.y
+        val maxY = minY + poly.bounds.height
 
-        val g = graphics
-        val poly = Polygon(
-            pontosEmX.toIntArray(),
-            pontosEmY.toIntArray(),
-            NumeroDeVertices
-        ) /*a criação desse objeto e necessaria para defirnimos o y min e o y max*/
-        val scan = IntArray(size.width) /*cria uma lista com toda o tamanho da altura da tela*/
-        val minY = poly.bounds.y /*pega o y min do poligono*/
-        val maxY = minY + poly.bounds.height /*pega 0 y max do poligono*/
-        for (y in minY until maxY) { /*responsavel por pecorrer o y min ate o y max*/
-            Arrays.fill(scan, 0) /*responsavel por pecorrer a tela*/
-            var x1 = Int.MAX_VALUE /*cria um inteiro de valor maximo possivel. Importante para definir o valor de x*/
-            for (i in 0 until NumeroDeVertices) {
-                val x2: Int = pontosEmY.get(i)
-                val y2: Int = pontosEmY.get(i)
-                val x3: Int =
-                    pontosEmX.get((i + 1) % NumeroDeVertices) /* e necessario fazer a divisão para garantir que pecorremos todos os pontos*/
-                val y3: Int = pontosEmY.get((i + 1) % NumeroDeVertices)
-                if ((y2 < y && y3 >= y) || (y3 < y && y2 >= y)) { /*verifica o valor de ymin e ymax em relação aos nossos vertices*/
-                    val x = x2 + (y - y2) * (x3 - x2) / (y3 - y2) /*calcula o valor de x*/
-                    scan[x]++ /*registra a tela*/
+        for (y in minY until maxY) {
+            Arrays.fill(scan, 0)
+            var x1 = Int.MAX_VALUE
+            repeat(numeroDeVertices) { indice ->
+                val x2: Int = pontosEmY[indice]
+                val y2: Int = pontosEmY[indice]
+                val x3: Int = pontosEmX[(indice + 1) % numeroDeVertices]
+                val y3: Int = pontosEmY[(indice + 1) % numeroDeVertices]
+
+                if ((y in (y2 + 1)..y3) || (y in (y3 + 1)..y2)) {
+                    val x = x2 + (y - y2) * (x3 - x2) / (y3 - y2)
+                    scan[x]++
                     if (x < x1) {
                         x1 = x
-                    } /*verifica o menor ponto de x*/
+                    }
                 }
             }
-            var fora = false /*booleano responsavel por verificar se a varredura esta fora ou dentro do poligono*/
+            var fora = false
+            graficos.color = Color.PINK
             for (x in x1 until size.width) {
-                if (scan[x] % 2 == 1) { /*verifica se esta fora da tela*/
+                if (scan[x] % 2 == 1) {
                     fora = !fora
                 }
                 if (fora) {
-                    g.drawLine(x, y, x, y)
+                    graficos.drawLine(x, y, x, y)
                 }
             }
         }
