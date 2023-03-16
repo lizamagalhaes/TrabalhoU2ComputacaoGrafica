@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="55e5391a-b20d-42a7-b846-bc821462e392" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/computacao/grafica/DesenhaCirculoPontoMedio.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/computacao/grafica/DesenhaCirculoPontoMedio.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/computacao/grafica/DesenhaElipseBresenhan.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/computacao/grafica/DesenhaElipseBresenhan.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +83,7 @@
       <option name="presentableId" value="Default" />
       <updated>1678786915711</updated>
       <workItem from="1678786917309" duration="29869000" />
-      <workItem from="1678922257271" duration="9421000" />
+      <workItem from="1678922257271" duration="10372000" />
     </task>
     <servers />
   </component>
