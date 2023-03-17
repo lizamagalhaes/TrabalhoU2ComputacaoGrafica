@@ -12,7 +12,7 @@ object Menu {
             printMenu()
             val opcao = readln().toInt()
 
-            if (opcao == 0){
+            if (opcao == 0) {
                 graficos?.clearRect(0, 0, 10000, 10000)
             }
 
@@ -94,7 +94,7 @@ object Menu {
         val eixoX = readln().toInt()
         println("Digite a altura da tela: ")
         val eixoY = readln().toInt()
-        jFrame.contentPane.add(DesenhaPoligonoConcavo(eixoX, eixoY))
+        jFrame.contentPane.add(DesenhaPoligonoConcavo())
         jFrame.setSize(eixoX, eixoY)
         jFrame.setLocationRelativeTo(null)
         jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE

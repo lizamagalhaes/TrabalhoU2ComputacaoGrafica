@@ -3,63 +3,77 @@ package computacao.grafica
 import java.awt.Color
 import java.awt.Graphics
 import java.awt.Polygon
-import java.util.*
 import javax.swing.JPanel
 
-class DesenhaPoligonoConcavo(val eixoX: Int, val eixoY: Int) : JPanel() {
-
+class DesenhaPoligonoConcavo : JPanel() {
+    private var numeroDeVertices: Int = 7
     val pontosEmX = listOf(100, 250, 300, 400, 300, 250, 180)
     val pontosEmY = listOf(130, 100, 210, 150, 350, 280, 350)
-    private var numeroDeVertices: Int = 7
+    private val vertices = arrayOf(
+        Pair(100F, 130F), // Primeiro vértice
+        Pair(250F, 100F), // Segundo vértice
+        Pair(300F, 210F), // Terceiro vértice
+        Pair(400F, 150F), // Quarto vértice
+        Pair(300F, 350F), // Quinto vértice
+        Pair(250F, 280F), // Sexto vértice
+        Pair(180F, 350F) // Sétimo vértice
+    )
 
     override fun paint(g: Graphics?) {
         super.paint(g)
-        repeat(numeroDeVertices) { indice ->
-            val x2: Int = pontosEmX[indice]
-            val y2: Int = pontosEmY[indice]
-            val x3: Int = pontosEmX[(indice + 1) % numeroDeVertices]
-            val y3: Int = pontosEmY[(indice + 1) % numeroDeVertices]
-            g?.let { graficos ->
-                graficos.color = Color.BLACK
-                graficos.drawLine(x2, y2, x3, y3)
-                preencherPoligonoComRasterizacao(graficos)
-            }
+        g?.let { graficos ->
+            graficos.color = Color.BLACK
+            desenhaPoligonoConcavo(graficos)
+            preencherPoligono(graficos)
         }
     }
 
-    private fun preencherPoligonoComRasterizacao(graficos: Graphics) {
+    private fun desenhaPoligonoConcavo(graficos: Graphics) {
         val poly = Polygon(pontosEmX.toIntArray(), pontosEmY.toIntArray(), numeroDeVertices)
-        val scan = IntArray(size.width)
-        val minY = poly.bounds.y
-        val maxY = minY + poly.bounds.height
+        graficos.drawPolygon(poly)
+    }
 
-        for (y in minY until maxY) {
-            Arrays.fill(scan, 0)
-            var x1 = Int.MAX_VALUE
-            repeat(numeroDeVertices) { indice ->
-                val x2: Int = pontosEmY[indice]
-                val y2: Int = pontosEmY[indice]
-                val x3: Int = pontosEmX[(indice + 1) % numeroDeVertices]
-                val y3: Int = pontosEmY[(indice + 1) % numeroDeVertices]
+    private fun preencherPoligono(graficos: Graphics) {
+        graficos.color = Color.PINK
 
-                if ((y in (y2 + 1)..y3) || (y in (y3 + 1)..y2)) {
-                    val x = x2 + (y - y2) * (x3 - x2) / (y3 - y2)
-                    scan[x]++
-                    if (x < x1) {
-                        x1 = x
-                    }
+        // Cria uma lista vazia para armazenar as interseções da linha horizontal com o polígono
+        val intersections = mutableListOf<Float>()
+
+        // Percorre cada linha horizontal da imagem
+        for (y in 0..height) {
+
+            // Define uma variável para contar o número de interseções da linha com o polígono
+            var intersectionsCount = 0
+
+            // Percorre cada aresta do polígono
+            for (i in 0..6) {
+                val vertex1 = vertices[i]
+                val vertex2 = vertices[(i + 1) % 7]
+
+                // Verifica se a aresta intersecta a linha horizontal
+                if ((vertex1.second <= y && vertex2.second > y) || (vertex1.second > y && vertex2.second <= y)) {
+                    val intersectX =
+                        (vertex1.first + (y - vertex1.second) / (vertex2.second - vertex1.second) * (vertex2.first - vertex1.first))
+                    intersections.add(intersectX) // Adiciona a interseção na lista
+                    intersectionsCount++
                 }
             }
-            var fora = false
-            graficos.color = Color.PINK
-            for (x in x1 until size.width) {
-                if (scan[x] % 2 == 1) {
-                    fora = !fora
-                }
-                if (fora) {
-                    graficos.drawLine(x, y, x, y)
-                }
+
+            // Ordena a lista de interseções
+            intersections.sort()
+
+            // Preenche a área entre as interseções da linha horizontal com o polígono
+            for (i in 0 until intersectionsCount step 2) {
+                graficos.drawLine(
+                    intersections[i].toInt(),
+                    y.toFloat().toInt(),
+                    intersections[i + 1].toInt(),
+                    y.toFloat().toInt()
+                )
             }
+
+            // Limpa a lista de interseções
+            intersections.clear()
         }
     }
 }

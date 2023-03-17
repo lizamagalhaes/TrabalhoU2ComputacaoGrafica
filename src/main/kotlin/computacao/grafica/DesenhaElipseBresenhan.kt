@@ -70,8 +70,3 @@ class DesenhaElipseBresenhan(val eixoX: Int, val eixoY: Int, var raioEmX: Int, v
         }
     }
 }
-
-// no codigo de Alber, para preencher e Elipse, ele repete a funcao de desenhar
-// porem, antes de iniciar o codigo com o Graphics, ele criar o seguinte for:
-// for(int aux=0; aux < raioEmX || aux < raioEmY; raioEmX--, raioEmY --)
-// ele chama o preenchimento no menu de forma separada
