@@ -7,6 +7,7 @@ import kotlin.system.exitProcess
 object Menu {
 
     private var graficos: Graphics? = null
+    val jFrame = JFrame()
     fun chamarMenu() {
         do {
             printMenu()
@@ -39,7 +40,6 @@ object Menu {
     }
 
     private fun inicializaJFrameParametrica(): Graphics? {
-        val jFrame = JFrame()
         println("Digite a largura da tela: ")
         val eixoX = readln().toInt()
         println("Digite a altura da tela: ")
@@ -55,7 +55,6 @@ object Menu {
     }
 
     private fun inicializaJFramePontoMedio(): Graphics? {
-        val jFrame = JFrame()
         println("Digite a largura da tela: ")
         val eixoX = readln().toInt()
         println("Digite a altura da tela: ")
@@ -71,7 +70,6 @@ object Menu {
     }
 
     private fun inicializaJFrameElipseBresenhan(): Graphics {
-        val jFrame = JFrame()
         println("Digite a largura da tela: ")
         val eixoX = readln().toInt()
         println("Digite a altura da tela: ")
@@ -89,7 +87,6 @@ object Menu {
     }
 
     private fun inicializaJFramePoligonoConcavo(): Graphics {
-        val jFrame = JFrame()
         println("Digite a largura da tela: ")
         val eixoX = readln().toInt()
         println("Digite a altura da tela: ")
